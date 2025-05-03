@@ -1,91 +1,141 @@
-  # use-persistent-state
+# How to Fix the AsyncStorage Error
 
-  A React hook for persistent state management with AsyncStorage support, particularly useful for React Native applications.
+## The Issue
 
-  ## Installation
+The error occurs because AsyncStorage isn't being properly imported when the package is used. This happens when the package is bundled.
 
-  ```bash
-  npm install use-persistent-state
-  # or
-  yarn add use-persistent-state
-  # or
-  pnpm add use-persistent-state
-  ```
+## Solution 1: Quick Fix for Users
 
-  ## Usage
+Users need to make sure they have AsyncStorage installed:
 
-  ```typescript
-  import { usePersistentState } from 'use-persistent-state';
+```bash
+npm install @react-native-async-storage/async-storage
+```
 
-  function MyComponent() {
-    const [userData, setUserData, clearUserData] = usePersistentState(
-      'user-data-key',
-      {
-        phoneNumber: '',
-        whatsAppNumber: '',
-        currency: 'iqd',
-      }
-    );
+## Solution 2: Update Your Package
 
-    // Use the state like normal React state
-    const updatePhone = () => {
-      setUserData(prev => ({
-        ...prev,
-        phoneNumber: '+123456789'
-      }));
-    };
+Update your package with the fixed code that handles AsyncStorage imports better:
 
-    // Clear all stored data
-    const clearData = async () => {
-      const success = await clearUserData();
-      if (success) {
-        console.log('Data cleared successfully');
-      }
-    };
+### Step 1: Update the source code
 
-    return (
-      <div>
-        <p>Phone: {userData.phoneNumber}</p>
-        <button onClick={updatePhone}>Update Phone</button>
-        <button onClick={clearData}>Clear Data</button>
-      </div>
-    );
+Replace your `src/index.ts` with the fixed version above that:
+
+- Uses dynamic imports for AsyncStorage
+- Checks if AsyncStorage is available before using it
+- Provides better error messages
+
+### Step 2: Update version and publish
+
+```bash
+# Update to version 1.0.2
+cd rebaz-use-persistent-state
+npm version patch
+
+# Build and publish
+npm run build
+npm publish
+```
+
+### Step 3: Update documentation
+
+Update your README.md to include clear installation instructions:
+
+````markdown
+# Installation
+
+Make sure you have the peer dependencies installed:
+
+```bash
+npm install rebaz-use-persistent-state @react-native-async-storage/async-storage
+```
+````
+
+## Platform Support
+
+This hook is designed for React Native applications and requires AsyncStorage to function.
+
+## Error Handling
+
+If you see the error "AsyncStorage.setItem is not a function", make sure you have installed the AsyncStorage package:
+
+```bash
+npm install @react-native-async-storage/async-storage
+```
+
+````
+
+### Step 4: Add to package.json
+Add a postinstall script to check for dependencies:
+
+```json
+{
+  "scripts": {
+    "postinstall": "node -e \"try { require('@react-native-async-storage/async-storage'); } catch (e) { console.warn('Warning: @react-native-async-storage/async-storage is required for rebaz-use-persistent-state to work properly'); }\""
   }
-  ```
-  
-  ## API
-  
-  ### `usePersistentState(key, initialValue)`
-  
-  #### Parameters
-  
-  - `key`: string - The key to store data in AsyncStorage
-  - `initialValue`: T - The initial value for the state
-  
-  #### Returns
-  
-  Returns an array with three elements:
-  1. `state`: T - The current state value
-  2. `setState`: React.Dispatch<React.SetStateAction<T>> - Function to update the state
-  3. `clearData`: () => Promise<boolean> - Function to clear the stored data
-  
-  ## Features
-  
-  - **Persistent Storage**: Automatically syncs state with AsyncStorage
-  - **Image Handling**: Special handling for image data with URI objects
-  - **Type Safe**: Full TypeScript support
-  - **Simple API**: Works just like useState with persistence
-  
-  ## Requirements
-  
-  - React 16.8+ (for hooks support)
-  - @react-native-async-storage/async-storage
-  
-  ## License
-  
-  MIT
-  
-  ## Contributing
-  
-  Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-  
+}
+````
+
+## Solution 3: Alternative Approach
+
+If you want to make the package more universal, you can create a conditional wrapper:
+
+```typescript
+// src/index.ts
+import { useState, useEffect, useCallback } from 'react';
+
+// Platform detection
+const isReactNative =
+  typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+
+// Storage adapter
+const storage = {
+  getItem: async (key: string) => {
+    if (isReactNative) {
+      const AsyncStorage =
+        require('@react-native-async-storage/async-storage').default;
+      return AsyncStorage.getItem(key);
+    }
+    // Web fallback
+    return localStorage.getItem(key);
+  },
+  setItem: async (key: string, value: string) => {
+    if (isReactNative) {
+      const AsyncStorage =
+        require('@react-native-async-storage/async-storage').default;
+      return AsyncStorage.setItem(key, value);
+    }
+    // Web fallback
+    return localStorage.setItem(key, value);
+  },
+  removeItem: async (key: string) => {
+    if (isReactNative) {
+      const AsyncStorage =
+        require('@react-native-async-storage/async-storage').default;
+      return AsyncStorage.removeItem(key);
+    }
+    // Web fallback
+    return localStorage.removeItem(key);
+  },
+};
+
+// ... rest of your hook code using the storage adapter
+```
+
+## Quick Fix for Current Users
+
+If users are experiencing this issue now, they can:
+
+1. Make sure AsyncStorage is installed
+2. Import it globally in their app:
+
+```typescript
+// At the top of your app entry file (index.js or App.js)
+import AsyncStorage from '@react-native-async-storage/async-storage';
+global.AsyncStorage = AsyncStorage;
+```
+
+3. Or use with legacy peer deps:
+
+```bash
+npm install rebaz-use-persistent-state --legacy-peer-deps
+```
