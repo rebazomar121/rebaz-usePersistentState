@@ -1,0 +1,65 @@
+{
+  "name": "rebaz-use-persistent-state",
+  "version": "1.0.0",
+  "description": "A React hook for persistent state management with AsyncStorage support",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "react",
+    "hook",
+    "persistent",
+    "state",
+    "storage",
+    "async-storage",
+    "react-native"
+  ],
+  "author": "Rebaz Omar",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rebazomar121/rebaz-usePersistentState.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rebazomar121/rebaz-usePersistentState/issues"
+  },
+  "homepage": "https://github.com/rebazomar121/rebaz-usePersistentState#readme",
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.0.0",
+    "react": "^19.1.0"
+  },
+  "devDependencies": {
+    "@react-native-async-storage/async-storage": "^1.19.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/jest": "^29.0.0",
+    "@types/react": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.0.0",
+    "prettier": "^3.0.0",
+    "react": "^19.1.0",
+    "rollup": "^3.0.0",
+    "tslib": "^2.6.0",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "dependencies": {
+    "react-dom": "^19.1.0",
+    "react-native": "^0.72.6"
+  }
+}

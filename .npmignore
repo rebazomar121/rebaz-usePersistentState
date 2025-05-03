@@ -1,0 +1,12 @@
+src/
+*.config.js
+*.config.json
+tsconfig.json
+.eslintrc.js
+.prettierrc
+node_modules/
+.git/
+.github/
+tests/
+examples/
+.DS_Store
